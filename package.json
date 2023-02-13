@@ -1,0 +1,16 @@
+{
+  "name": "polyp",
+  "version": "1.0.0",
+  "description": "Polyp: A simple and fast JavaScript package manager",
+  "main": "index.js",
+  "files": [
+    "src/polyp.exe"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "g++ src/polyp.cpp -o src/polyp.exe"
+  },
+  "author": "ItsTheWhale",
+  "license": "MIT",
+  "bin": {}
+}
