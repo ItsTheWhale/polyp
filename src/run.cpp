@@ -8,11 +8,6 @@
 using std::string;
 
 void commands::run(cliOptionsStruct *cliOptions) {
-  // Is there a target
-  if (cliOptions->target == "") {
-    std::cerr << "No script name specified" << '\n';
-    return;
-  }
 
   // Read package.json
   std::fstream packageJsonFile("package.json");
