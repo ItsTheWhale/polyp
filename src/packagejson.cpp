@@ -1,4 +1,5 @@
 #include "packagejson.hpp"
+#include "rapidjson/document.h"
 #include <fstream>
 #include <iostream>
 #include <regex>

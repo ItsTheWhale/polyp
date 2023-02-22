@@ -1,3 +1,4 @@
+#include "rapidjson/document.h"
 #include <string>
 
 using std::string;
