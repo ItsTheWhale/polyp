@@ -49,7 +49,7 @@ void commands::run(cliOptionsStruct *cliOptions) {
        itr != scriptObject.MemberEnd(); itr++) {
     if (itr->name.GetString() == cliOptions->target) {
       hasScript = true;
-      std::cout << cliOptions->target << "> " << itr->value.GetString() << '\n';
+      std::cout << cliOptions->target << "> " << itr->value.GetString() << '\n' << '\n';
       system(itr->value.GetString());
       break;
     }

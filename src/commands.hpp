@@ -7,7 +7,7 @@ using std::string;
 #define COMMANDS_HPP_
 
 namespace commands {
-void init();
+void init(cliOptionsStruct* cliOptions);
 void run(cliOptionsStruct* cliOptions);
 }
 

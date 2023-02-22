@@ -1,16 +1,17 @@
 #include "commands.hpp"
 #include "packagejson.hpp"
+#include "polyp.hpp"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include "rapidjson/stringbuffer.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 #include <string>
 
 using std::string;
 
-void commands::init() {
+void commands::init(cliOptionsStruct *cliOptions) {
   // Does package.json exist?
   std::ifstream packageJsonFile("package.json");
   if (packageJsonFile.good()) {
@@ -34,23 +35,25 @@ void commands::init() {
 
   // Get input
   /// name
-  string name = "";
-  bool isValidName = false;
-  do {
-    std::cout << "Package name (default): ";
-    std::getline(std::cin, name);
-    if (name == "") {
-      name = "default";
-      break;
-    }
-    isValidName = packageJson::validate::name(name);
-    if (!isValidName)
-      std::cout
-          << "Name \"" << name
-          << "\" is not valid. It must follow rules as defined in "
-             "https://docs.npmjs.com/cli/v9/configuring-npm/package-json#name."
-          << '\n';
-  } while (!isValidName);
+  string name = "default";
+  if (!cliOptions->yes) {
+    bool isValidName = false;
+    do {
+      std::cout << "Package name (default): ";
+      std::getline(std::cin, name);
+      if (name == "") {
+        name = "default";
+        break;
+      }
+      isValidName = packageJson::validate::name(name);
+      if (!isValidName)
+        std::cout << "Name \"" << name
+                  << "\" is not valid. It must follow rules as defined in "
+                     "https://docs.npmjs.com/cli/v9/configuring-npm/"
+                     "package-json#name."
+                  << '\n';
+    } while (!isValidName);
+  }
   rapidjson::Value nameValue;
   char nameBuffer[214];
   int nameLen = sprintf(nameBuffer, name.c_str());
@@ -59,24 +62,26 @@ void commands::init() {
   DOM.AddMember("name", nameValue, DOM.GetAllocator());
 
   // version
-  string version = "";
-  bool isValidVersion = false;
-  do {
-    std::cout << "Version (0.0.0): ";
-    std::getline(std::cin, version);
-    if (version == "") {
-      version = "0.0.0";
-      break;
-    }
-    isValidVersion = packageJson::validate::semver(version);
-    if (!isValidVersion)
-      std::cout << "Version \"" << version
-                << "\" is not valid. It must be semantically versioned, as "
-                   "specified by "
-                   "https://docs.npmjs.com/cli/v9/configuring-npm/"
-                   "package-json#version."
-                << '\n';
-  } while (!isValidVersion);
+  string version = "0.0.0";
+  if (!cliOptions->yes) {
+    bool isValidVersion = false;
+    do {
+      std::cout << "Version (0.0.0): ";
+      std::getline(std::cin, version);
+      if (version == "") {
+        version = "0.0.0";
+        break;
+      }
+      isValidVersion = packageJson::validate::semver(version);
+      if (!isValidVersion)
+        std::cout << "Version \"" << version
+                  << "\" is not valid. It must be semantically versioned, as "
+                     "specified by "
+                     "https://docs.npmjs.com/cli/v9/configuring-npm/"
+                     "package-json#version."
+                  << '\n';
+    } while (!isValidVersion);
+  }
   rapidjson::Value versionValue;
   char versionBuffer[25];
   int versionLen = sprintf(versionBuffer, version.c_str());
@@ -86,8 +91,10 @@ void commands::init() {
 
   // description
   string description = "";
-  std::cout << "Description: ";
-  std::getline(std::cin, description);
+  if (!cliOptions->yes) {
+    std::cout << "Description: ";
+    std::getline(std::cin, description);
+  }
   rapidjson::Value descriptionValue;
   char descriptionBuffer[300];
   int descriptionLen = sprintf(descriptionBuffer, description.c_str());
@@ -98,8 +105,10 @@ void commands::init() {
 
   // entry point
   string entry = "";
-  std::cout << "Entry Script: ";
-  std::getline(std::cin, entry);
+  if (!cliOptions->yes) {
+    std::cout << "Entry Script: ";
+    std::getline(std::cin, entry);
+  }
   rapidjson::Value entryValue;
   char entryBuffer[50];
   int entryLen = sprintf(entryBuffer, entry.c_str());
@@ -109,8 +118,10 @@ void commands::init() {
 
   // repository
   string repository = "";
-  std::cout << "Repository: ";
-  std::getline(std::cin, repository);
+  if (!cliOptions->yes) {
+    std::cout << "Repository: ";
+    std::getline(std::cin, repository);
+  }
   rapidjson::Value repositoryValue;
   char repositoryBuffer[100];
   int repositoryLen = sprintf(repositoryBuffer, repository.c_str());
@@ -121,8 +132,10 @@ void commands::init() {
 
   // keywords
   string keywordInput = "";
-  std::cout << "Keywords: ";
-  std::getline(std::cin, keywordInput);
+  if (!cliOptions->yes) {
+    std::cout << "Keywords: ";
+    std::getline(std::cin, keywordInput);
+  }
   rapidjson::Value keywords(rapidjson::kArrayType);
   rapidjson::Document::AllocatorType &keywordAllocator = DOM.GetAllocator();
   std::stringstream keywordStream(keywordInput);
@@ -155,8 +168,10 @@ void commands::init() {
 
   // author
   string author = "";
-  std::cout << "Author: ";
-  std::getline(std::cin, author);
+  if (!cliOptions->yes) {
+    std::cout << "Author: ";
+    std::getline(std::cin, author);
+  }
   rapidjson::Value authorValue;
   char authorBuffer[50];
   int authorLen = sprintf(authorBuffer, author.c_str());
@@ -165,24 +180,27 @@ void commands::init() {
   DOM.AddMember("author", authorValue, DOM.GetAllocator());
 
   // license
-  string license = "";
-  bool isValidLicense = false;
-  do {
-    std::cout << "License (MIT): ";
-    std::getline(std::cin, license);
-    if (license == "") {
-      license = "MIT";
-      break;
-    }
-    isValidLicense = packageJson::validate::license(license);
-    if (!isValidLicense)
-      std::cout << "License \"" << license
-                << "\" is not valid. It must be a SPDX license identifier, as "
-                   "defined in "
-                   "https://docs.npmjs.com/cli/v9/configuring-npm/"
-                   "package-json#license."
-                << '\n';
-  } while (!isValidLicense);
+  string license = "MIT";
+  if (!cliOptions->yes) {
+    bool isValidLicense = false;
+    do {
+      std::cout << "License (MIT): ";
+      std::getline(std::cin, license);
+      if (license == "") {
+        license = "MIT";
+        break;
+      }
+      isValidLicense = packageJson::validate::license(license);
+      if (!isValidLicense)
+        std::cout
+            << "License \"" << license
+            << "\" is not valid. It must be a SPDX license identifier, as "
+               "defined in "
+               "https://docs.npmjs.com/cli/v9/configuring-npm/"
+               "package-json#license."
+            << '\n';
+    } while (!isValidLicense);
+  }
   rapidjson::Value licenseValue;
   char licenseBuffer[50];
   int licenseLen = sprintf(licenseBuffer, license.c_str());

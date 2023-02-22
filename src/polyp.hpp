@@ -7,6 +7,7 @@ using std::string;
 
 struct cliOptionsStruct {
     string target = "";
+    bool yes = false;
 };
 
 #endif

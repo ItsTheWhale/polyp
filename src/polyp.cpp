@@ -16,8 +16,8 @@ int main(int argc, char **argv) {
 
   // init command
   CLI::App *initCommand =
-      app.add_subcommand("init", "Initialise a new package.json")->callback([] {
-        commands::init();
+      app.add_subcommand("init", "Initialise a new package.json")->callback([&cliOptions] {
+        commands::init(&cliOptions);
       });
 
   // run command
@@ -26,7 +26,8 @@ int main(int argc, char **argv) {
         commands::run(&cliOptions);
       });
 
-  app.add_option("target", cliOptions.target, "Set target");
+  initCommand->add_flag("-y, --yes", cliOptions.yes, "Automatically fill out default fields when using init");
+  runCommand->add_option("target", cliOptions.target, "Set target");
 
   CLI11_PARSE(app, argc, argv);
 }
