@@ -12,5 +12,7 @@
   },
   "author": "ItsTheWhale",
   "license": "MIT",
-  "bin": {}
+  "bin": {
+    "polyp": "./src/polyp.exe"
+  }
 }
