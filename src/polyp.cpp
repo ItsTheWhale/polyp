@@ -16,18 +16,18 @@ int main(int argc, char **argv) {
 
   // init command
   CLI::App *initCommand =
-      app.add_subcommand("init", "Initialise a new package.json")->callback([&cliOptions] {
-        commands::init(&cliOptions);
-      });
+      app.add_subcommand("init", "Initialise a new package.json")
+          ->callback([&cliOptions] { commands::init(&cliOptions); });
+  initCommand->add_flag("-y, --yes", cliOptions.yes,
+                        "Automatically fill out default fields");
 
   // run command
   CLI::App *runCommand =
       app.add_subcommand("run", "Runs a script")->callback([&cliOptions] {
         commands::run(&cliOptions);
       });
-
-  initCommand->add_flag("-y, --yes", cliOptions.yes, "Automatically fill out default fields when using init");
-  runCommand->add_option("target", cliOptions.target, "Set target");
+  runCommand->add_option("name", cliOptions.target, "Script name to be runned")
+      ->required();
 
   CLI11_PARSE(app, argc, argv);
 }
